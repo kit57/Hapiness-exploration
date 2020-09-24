@@ -55,12 +55,47 @@ corrplot(Happy_2018 %>% select(-Happiness_Rank, -Country, -Year) %>% cor(method 
 #print(Happy_2018)
 
 
+Happy_2019$Continent <- NA
+Happy_2019$Continent[which(Happy_2019$Country %in% c("Israel", "United Arab Emirates", "Singapore", "Thailand", "Taiwan Province of China",
+                                                             "Qatar", "Saudi Arabia", "Kuwait", "Bahrain", "Malaysia", "Uzbekistan", "Japan",
+                                                             "South Korea", "Turkmenistan", "Kazakhstan", "Turkey", "Hong Kong S.A.R., China", "Philippines",
+                                                             "Jordan", "China", "Pakistan", "Indonesia", "Azerbaijan", "Lebanon", "Vietnam",
+                                                             "Tajikistan", "Bhutan", "Kyrgyzstan", "Nepal", "Mongolia", "Palestinian Territories",
+                                                             "Iran", "Bangladesh", "Myanmar", "Iraq", "Sri Lanka", "Armenia", "India", "Georgia",
+                                                             "Cambodia", "Afghanistan", "Yemen", "Syria"))] <- "Asia"
+Happy_2019$Continent[which(Happy_2019$Country %in% c("Norway", "Denmark", "Iceland", "Switzerland", "Finland",
+                                                             "Netherlands", "Sweden", "Austria", "Ireland", "Germany",
+                                                             "Belgium", "Luxembourg", "United Kingdom", "Czech Republic",
+                                                             "Malta", "France", "Spain", "Slovakia", "Poland", "Italy",
+                                                             "Russia", "Lithuania", "Latvia", "Moldova", "Romania",
+                                                             "Slovenia", "North Cyprus", "Cyprus", "Estonia", "Belarus",
+                                                             "Serbia", "Hungary", "Croatia", "Kosovo", "Montenegro",
+                                                             "Greece", "Portugal", "Bosnia and Herzegovina", "Macedonia",
+                                                             "Bulgaria", "Albania", "Ukraine"))] <- "Europe"
+Happy_2019$Continent[which(Happy_2019$Country %in% c("Canada", "Costa Rica", "United States", "Mexico",  
+                                                             "Panama","Trinidad and Tobago", "El Salvador", "Belize", "Guatemala",
+                                                             "Jamaica", "Nicaragua", "Dominican Republic", "Honduras",
+                                                             "Haiti"))] <- "North America"
+Happy_2019$Continent[which(Happy_2019$Country %in% c("Chile", "Brazil", "Argentina", "Uruguay",
+                                                             "Colombia", "Ecuador", "Bolivia", "Peru",
+                                                             "Paraguay", "Venezuela"))] <- "South America"
+Happy_2019$Continent[which(Happy_2019$Country %in% c("New Zealand", "Australia"))] <- "Australia"
+
+
+Happy_2019$Continent[which(is.na(Happy_2019$Continent))] <- "Africa"
+
 ### Plot world map with happiness_Score
 Happy_2019$code <- countrycode(Happy_2019$Country, 'country.name', 'iso3c')
-Happy_2019[Happy_2019$Country=="Kosovo", "code"] <- "XKX"
+Happy_2019[Happy_2019$Country == "Kosovo", "code"] <- "XKX"
+
+# Remove null  &amp; NA values
+2
+Happy_2019[!(is.na(Happy_2019$Country) | Happy_2019$Country=="" | is.na(Happy_2019$code) | 
+               Happy_2019$code==""),] 
+
 
 # light grey boundaries
-l <- list(color = toRGB("grey"), width = 0.5)
+l <- list(color = "grey", width = 0.5)
 
 # specify map projection/options
 g <- list(
@@ -74,7 +109,7 @@ plot_geo(Happy_2019) %>%
     z = ~round(Happiness_Score, 2), color = ~Happiness_Score, colors = 'Blues',
     # Hover text:
     text = ~with(data=Happy_2019, paste("<b>Country:</b> ", Country,
-                                        "<br><b>Region:</b> ", Region,
+                                        "<br><b>Continent:</b> ", Continent,
                                         "<br><b>Happiness Score: </b>", Happiness_Score)),
     locations = ~code, marker = list(line = l)) %>%
   colorbar(title = 'Happiness Score') %>%
